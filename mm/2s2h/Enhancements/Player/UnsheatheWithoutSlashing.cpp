@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <libultraship/bridge/consolevariablebridge.h>
 #include "2s2h/GameInteractor/GameInteractor.h"
 #include "2s2h/ShipInit.hpp"
@@ -5,7 +6,9 @@
 #define CVAR_NAME "gEnhancements.Player.UnsheatheWithoutSlashing"
 #define CVAR CVarGetInteger(CVAR_NAME, 0)
 #define CVAR_SPEED_NAME "gEnhancements.Player.UnsheatheSpeed"
-#define CVAR_SPEED CVarGetFloat(CVAR_SPEED_NAME, 1.0f)
+// The slider's minimum, also enforced here in case a lower value was saved earlier.
+#define MIN_DRAW_SPEED 0.5f
+#define CVAR_SPEED std::max(CVarGetFloat(CVAR_SPEED_NAME, 1.0f), MIN_DRAW_SPEED)
 
 void RegisterUnsheatheWithoutSlashing() {
     COND_VB_SHOULD(VB_USE_HELD_ITEM_AFTER_CHANGE, CVAR, {

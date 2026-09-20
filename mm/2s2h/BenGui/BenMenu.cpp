@@ -1100,7 +1100,7 @@ void BenMenu::AddEnhancements() {
         .Options(FloatSliderOptions()
                      .Tooltip("Slows down how fast Link draws his sword when unsheathing without slashing. 1.00x is "
                               "the vanilla speed.")
-                     .Min(0.25f)
+                     .Min(0.5f)
                      .Max(1.0f)
                      .Format("%.2fx")
                      .DefaultValue(1.0f));
