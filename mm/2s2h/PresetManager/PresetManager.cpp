@@ -472,6 +472,7 @@ nlohmann::json voyage3PresetJ = R"(
                 "PreventDiveOverWater": 0,
                 "SlashWhileRunning": 0,
                 "UnderwaterOcarina": 1,
+                "UnsheatheSpeed": 1.0,
                 "UnsheatheWithoutSlashing": 0
             },
             "PlayerActions": {

@@ -1092,6 +1092,18 @@ void BenMenu::AddEnhancements() {
     AddWidget(path, "Unsheathe Sword Without Slashing", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.UnsheatheWithoutSlashing")
         .Options(CheckboxOptions().Tooltip("Allows Link to unsheathe sword without slashing automatically."));
+    AddWidget(path, "Sword Draw Speed", WIDGET_CVAR_SLIDER_FLOAT)
+        .CVar("gEnhancements.Player.UnsheatheSpeed")
+        .PreFunc([](WidgetInfo& info) {
+            info.isHidden = !CVarGetInteger("gEnhancements.Player.UnsheatheWithoutSlashing", 0);
+        })
+        .Options(FloatSliderOptions()
+                     .Tooltip("Slows down how fast Link draws his sword when unsheathing without slashing. 1.00x is "
+                              "the vanilla speed.")
+                     .Min(0.5f)
+                     .Max(1.0f)
+                     .Format("%.2fx")
+                     .DefaultValue(1.0f));
     AddWidget(path, "Slash While Running", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.SlashWhileRunning")
         .Options(CheckboxOptions().Tooltip(

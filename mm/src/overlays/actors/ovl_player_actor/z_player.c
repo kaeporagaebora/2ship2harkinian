@@ -4038,6 +4038,8 @@ void Player_StartChangingHeldItem(Player* this, PlayState* play) {
         frameSpeed *= 2.0f;
     }
 
+    GameInteractor_Should(VB_SET_HELD_ITEM_CHANGE_SPEED, true, this, heldItemAction, &frameSpeed);
+
     PlayerAnimation_Change(play, &this->skelAnimeUpper, anim, frameSpeed, startFrame, endFrame, ANIMMODE_ONCE, 0.0f);
 
     this->stateFlags3 &= ~PLAYER_STATE3_START_CHANGING_HELD_ITEM;
