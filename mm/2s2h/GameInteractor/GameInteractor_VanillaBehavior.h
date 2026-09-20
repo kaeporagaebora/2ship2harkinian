@@ -2411,6 +2411,16 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // true
+    // ```
+    // Whether to start the full-body spin attack charge (`Player_Action_30`), which makes Link stop moving.
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    VB_START_SPIN_ATTACK_CHARGE,
+
+    // #### `result`
+    // ```c
     // gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE
     // ```
     // #### `args`
