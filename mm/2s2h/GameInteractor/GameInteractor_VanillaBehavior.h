@@ -2195,6 +2195,17 @@ typedef enum {
     // ```c
     // true
     // ```
+    // The result is ignored, the hook only modifies the speed.
+    // #### `args`
+    // - `*Player`
+    // - `s8` (the item action being changed to, `PLAYER_IA_NONE` when putting an item away)
+    // - `*f32` (the animation speed of the change, negative when putting an item away)
+    VB_SET_HELD_ITEM_CHANGE_SPEED,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
     // #### `args`
     // - `*Player`
     // - `u32` (damage flags)
