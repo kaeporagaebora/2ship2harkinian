@@ -352,6 +352,15 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // (Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f) [|| ANIM_FLAG_ENABLE_MOVEMENT]
+    // ```
+    // Whether the upper body animation only overrides the upper body limbs (true) or the whole body (false).
+    // #### `args`
+    // - `*Player`
+    VB_COPY_UPPER_BODY_LIMBS_ONLY,
+
+    // #### `result`
+    // ```c
     // (bean->unk_1E4 == 2) || (bean->unk_1E4 == 1)
     // ```
     // #### `args`
@@ -2034,6 +2043,15 @@ typedef enum {
     // ```c
     // true
     // ```
+    // Whether item buttons are processed this frame (using or swapping items, including the B button sword).
+    // #### `args`
+    // - `*Player`
+    VB_PROCESS_ITEM_BUTTONS,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
     // #### `args`
     // - `*ObjOshihiki`
     VB_PUSH_BLOCK_SET_SPEED,
@@ -2380,6 +2398,26 @@ typedef enum {
     // #### `args`
     // - None
     VB_START_JUMPSLASH,
+
+    // #### `result`
+    // ```c
+    // false
+    // ```
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    // - `PlayerMeleeWeaponAnimation` (the attack about to start)
+    VB_START_RUNNING_SLASH,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
+    // Whether to start the full-body spin attack charge (`Player_Action_30`), which makes Link stop moving.
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    VB_START_SPIN_ATTACK_CHARGE,
 
     // #### `result`
     // ```c

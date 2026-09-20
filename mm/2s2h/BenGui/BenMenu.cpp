@@ -1092,6 +1092,10 @@ void BenMenu::AddEnhancements() {
     AddWidget(path, "Unsheathe Sword Without Slashing", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.UnsheatheWithoutSlashing")
         .Options(CheckboxOptions().Tooltip("Allows Link to unsheathe sword without slashing automatically."));
+    AddWidget(path, "Slash While Running", WIDGET_CVAR_CHECKBOX)
+        .CVar("gEnhancements.Player.SlashWhileRunning")
+        .Options(CheckboxOptions().Tooltip(
+            "Allows Link to slash his sword while running without his legs stopping. Human Link only."));
     AddWidget(path, "Fierce Deity Putaway", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.FierceDeityPutaway")
         .Options(CheckboxOptions().Tooltip("Allows Fierce Deity Link to put away his sword."));
