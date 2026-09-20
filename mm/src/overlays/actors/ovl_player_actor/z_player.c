@@ -3838,6 +3838,9 @@ EquipSlot func_8082FDC4(void) {
  * Handles the high level item usage and changing process based on the B and C buttons.
  */
 void Player_ProcessItemButtons(Player* this, PlayState* play) {
+    if (!GameInteractor_Should(VB_PROCESS_ITEM_BUTTONS, true, this)) {
+        return;
+    }
     if (this->stateFlags1 & (PLAYER_STATE1_CARRYING_ACTOR | PLAYER_STATE1_20000000)) {
         return;
     }
@@ -4826,7 +4829,8 @@ bool Player_UpdateUpperBody(Player* this, PlayState* play) {
     }
 
     if (this->skelAnimeUpperBlendWeight != 0.0f) {
-        if ((Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f)) {
+        if (GameInteractor_Should(VB_COPY_UPPER_BODY_LIMBS_ONLY,
+                                  (Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f), this)) {
             AnimTaskQueue_AddCopyUsingMapInverted(play, this->skelAnime.limbCount, this->skelAnimeUpper.jointTable,
                                                   this->skelAnime.jointTable, sPlayerUpperBodyLimbCopyMap);
         }
@@ -4836,8 +4840,10 @@ bool Player_UpdateUpperBody(Player* this, PlayState* play) {
             AnimTaskQueue_AddInterp(play, this->skelAnime.limbCount, this->skelAnime.jointTable,
                                     this->skelAnimeUpper.jointTable, 1.0f - this->skelAnimeUpperBlendWeight);
         }
-    } else if ((Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f) ||
-               (this->skelAnime.movementFlags & ANIM_FLAG_ENABLE_MOVEMENT)) {
+    } else if (GameInteractor_Should(VB_COPY_UPPER_BODY_LIMBS_ONLY,
+                                     (Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f) ||
+                                         (this->skelAnime.movementFlags & ANIM_FLAG_ENABLE_MOVEMENT),
+                                     this)) {
         AnimTaskQueue_AddCopyUsingMap(play, this->skelAnime.limbCount, this->skelAnime.jointTable,
                                       this->skelAnimeUpper.jointTable, sPlayerUpperBodyLimbCopyMap);
     } else {
@@ -14090,6 +14096,10 @@ s32 Player_ActionHandler_7(Player* this, PlayState* play) {
     if (!func_8083A6C0(play, this)) {
         if (func_808396B8(play, this)) {
             PlayerMeleeWeaponAnimation meleeWeaponAnim = func_808335F4(this);
+
+            if (GameInteractor_Should(VB_START_RUNNING_SLASH, false, this, play, meleeWeaponAnim)) {
+                return true;
+            }
 
             func_80833864(play, this, meleeWeaponAnim);
             if ((meleeWeaponAnim >= PLAYER_MWA_SPIN_ATTACK_1H) ||

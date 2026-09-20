@@ -470,6 +470,7 @@ nlohmann::json voyage3PresetJ = R"(
                 "InstantPutaway": 1,
                 "ManualJump": 0,
                 "PreventDiveOverWater": 0,
+                "SlashWhileRunning": 0,
                 "UnderwaterOcarina": 1,
                 "UnsheatheWithoutSlashing": 0
             },
