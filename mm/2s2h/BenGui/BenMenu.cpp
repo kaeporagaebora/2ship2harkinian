@@ -1092,6 +1092,10 @@ void BenMenu::AddEnhancements() {
     AddWidget(path, "Unsheathe Sword Without Slashing", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.UnsheatheWithoutSlashing")
         .Options(CheckboxOptions().Tooltip("Allows Link to unsheathe sword without slashing automatically."));
+    AddWidget(path, "Epona Backflip", WIDGET_CVAR_CHECKBOX)
+        .CVar("gEnhancements.Player.EponaBackflip")
+        .Options(CheckboxOptions().Tooltip(
+            "While riding a horse, hold R and press A to backflip off of it. A moving horse slows to a stop."));
     AddWidget(path, "Fierce Deity Putaway", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.FierceDeityPutaway")
         .Options(CheckboxOptions().Tooltip("Allows Fierce Deity Link to put away his sword."));

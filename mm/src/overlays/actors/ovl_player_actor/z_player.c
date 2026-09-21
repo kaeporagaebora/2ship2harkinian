@@ -16998,6 +16998,10 @@ void Player_Action_52(Player* this, PlayState* play) {
 
     this->stateFlags2 |= PLAYER_STATE2_40;
 
+    if (GameInteractor_Should(VB_START_HORSE_BACKFLIP, false, this, play)) {
+        return;
+    }
+
     func_80847E2C(this, 1.0f, 10.0f);
     if (this->av2.actionVar2 == 0) {
         if (PlayerAnimation_Update(play, &this->skelAnime)) {

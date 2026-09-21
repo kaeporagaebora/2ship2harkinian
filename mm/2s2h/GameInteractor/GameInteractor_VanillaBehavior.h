@@ -808,6 +808,27 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // true
+    // ```
+    // Whether a horse freezes (stops moving at once) when its rider gets off.
+    // #### `args`
+    // - `*EnHorse`
+    // - `*PlayState`
+    VB_FREEZE_HORSE_WHEN_RIDER_LEAVES,
+
+    // #### `result`
+    // ```c
+    // false
+    // ```
+    // Whether a horse without a rider that has just finished braking should freeze, like a horse that was dismounted
+    // does, rather than stay in its "ridden and standing" state.
+    // #### `args`
+    // - `*EnHorse`
+    // - `*PlayState`
+    VB_FREEZE_UNRIDDEN_HORSE_AFTER_BRAKING,
+
+    // #### `result`
+    // ```c
     // itemAction == GET_IA_FROM_MASK(this->currentMask)
     // ```
     // #### `args`
@@ -2369,6 +2390,24 @@ typedef enum {
     // #### `args`
     // - `*EnElfgrp`
     VB_START_GREAT_FAIRY_CUTSCENE,
+
+    // #### `result`
+    // ```c
+    // false
+    // ```
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    VB_START_HORSE_BACKFLIP,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
+    // Whether the horse boosts (uses a carrot) when A is pressed.
+    // #### `args`
+    // - `*EnHorse`
+    VB_START_HORSE_BOOST,
 
     // #### `result`
     // ```c

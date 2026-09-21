@@ -181,6 +181,7 @@ nlohmann::json curatedPresetJ = R"(
                 "ClimbSpeed": 5,
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
+                "EponaBackflip": 0,
                 "FierceDeityPutaway": 1,
                 "InfiniteDekuHopping": 1,
                 "InstantPutaway": 1,
