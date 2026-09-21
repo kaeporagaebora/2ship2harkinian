@@ -1108,6 +1108,36 @@ void BenMenu::AddEnhancements() {
         .CVar("gEnhancements.Player.SlashWhileRunning")
         .Options(CheckboxOptions().Tooltip(
             "Allows Link to slash his sword while running without his legs stopping. Human Link only."));
+    AddWidget(path, "Hat Physics", WIDGET_CVAR_CHECKBOX)
+        .CVar("gEnhancements.Player.HatPhysics")
+        .Options(CheckboxOptions().Tooltip("Makes the tip of human Link's hat swing and droop as he moves."));
+    AddWidget(path, "Hat Stiffness", WIDGET_CVAR_SLIDER_FLOAT)
+        .CVar("gEnhancements.Player.HatPhysicsStiffness")
+        .PreFunc([](WidgetInfo& info) { info.isHidden = !CVarGetInteger("gEnhancements.Player.HatPhysics", 0); })
+        .Options(FloatSliderOptions()
+                     .Tooltip("How strongly the hat springs back to its normal shape. Lower is floppier.")
+                     .Min(0.02f)
+                     .Max(0.5f)
+                     .Format("%.2f")
+                     .DefaultValue(0.15f));
+    AddWidget(path, "Hat Gravity", WIDGET_CVAR_SLIDER_FLOAT)
+        .CVar("gEnhancements.Player.HatPhysicsGravity")
+        .PreFunc([](WidgetInfo& info) { info.isHidden = !CVarGetInteger("gEnhancements.Player.HatPhysics", 0); })
+        .Options(FloatSliderOptions()
+                     .Tooltip("How much the hat droops. 1.00x is the default.")
+                     .Min(0.0f)
+                     .Max(3.0f)
+                     .Format("%.2fx")
+                     .DefaultValue(1.0f));
+    AddWidget(path, "Hat Bounciness", WIDGET_CVAR_SLIDER_FLOAT)
+        .CVar("gEnhancements.Player.HatPhysicsDamping")
+        .PreFunc([](WidgetInfo& info) { info.isHidden = !CVarGetInteger("gEnhancements.Player.HatPhysics", 0); })
+        .Options(FloatSliderOptions()
+                     .Tooltip("How long the hat keeps swinging after Link stops. Higher keeps swinging longer.")
+                     .Min(0.5f)
+                     .Max(0.98f)
+                     .Format("%.2f")
+                     .DefaultValue(0.85f));
     AddWidget(path, "Fierce Deity Putaway", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.FierceDeityPutaway")
         .Options(CheckboxOptions().Tooltip("Allows Fierce Deity Link to put away his sword."));

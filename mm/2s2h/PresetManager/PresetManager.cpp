@@ -466,6 +466,7 @@ nlohmann::json voyage3PresetJ = R"(
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
                 "FierceDeityPutaway": 1,
+                "HatPhysics": 0,
                 "InfiniteDekuHopping": 0,
                 "InstantPutaway": 1,
                 "ManualJump": 0,
