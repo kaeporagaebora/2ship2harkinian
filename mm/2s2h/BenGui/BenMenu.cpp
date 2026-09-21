@@ -1138,6 +1138,10 @@ void BenMenu::AddEnhancements() {
                      .Max(0.98f)
                      .Format("%.2f")
                      .DefaultValue(0.85f));
+    AddWidget(path, "Epona Backflip", WIDGET_CVAR_CHECKBOX)
+        .CVar("gEnhancements.Player.EponaBackflip")
+        .Options(CheckboxOptions().Tooltip(
+            "While riding a horse, hold R and press A to backflip off of it. A moving horse slows to a stop."));
     AddWidget(path, "Fierce Deity Putaway", WIDGET_CVAR_CHECKBOX)
         .CVar("gEnhancements.Player.FierceDeityPutaway")
         .Options(CheckboxOptions().Tooltip("Allows Fierce Deity Link to put away his sword."));
