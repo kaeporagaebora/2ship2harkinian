@@ -8612,10 +8612,8 @@ s32 Player_ActionHandler_8(Player* this, PlayState* play) {
                                         ((this->unk_ADC == 1) && (this->heldItemAction != PLAYER_IA_DEKU_STICK)))) {
                 if (this->transformation == PLAYER_FORM_ZORA) {
                     func_80830E30(this, play);
-                } else if (GameInteractor_Should(VB_START_SPIN_ATTACK_CHARGE, true, this, play)) {
-                    func_808335B0(play, this);
                 } else {
-                    return false;
+                    func_808335B0(play, this);
                 }
                 return true;
             }
