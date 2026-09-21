@@ -181,6 +181,7 @@ nlohmann::json curatedPresetJ = R"(
                 "ClimbSpeed": 5,
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
+                "EponaBackflip": 0,
                 "FierceDeityPutaway": 1,
                 "InfiniteDekuHopping": 1,
                 "InstantPutaway": 1,
@@ -466,11 +467,14 @@ nlohmann::json voyage3PresetJ = R"(
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
                 "FierceDeityPutaway": 1,
+                "HatPhysics": 0,
                 "InfiniteDekuHopping": 0,
                 "InstantPutaway": 1,
                 "ManualJump": 0,
                 "PreventDiveOverWater": 0,
+                "SlashWhileRunning": 0,
                 "UnderwaterOcarina": 1,
+                "UnsheatheSpeed": 1.0,
                 "UnsheatheWithoutSlashing": 0
             },
             "PlayerActions": {
