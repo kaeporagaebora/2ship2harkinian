@@ -1690,6 +1690,20 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // true
+    // ```
+    // The result is ignored, the hook lets a mod replace the display list of Link's hat (`*dList`).
+    // The matrix of the hat limb is not applied yet at this point, `pos` and `rot` are its joint transform.
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    // - `*Gfx*` (the display list of the limb)
+    // - `*Vec3f` (pos)
+    // - `*Vec3s` (rot)
+    VB_OVERRIDE_PLAYER_HAT_DL,
+
+    // #### `result`
+    // ```c
     // player->stateFlags3 & PLAYER_STATE3_10000000
     // ```
     // #### `args`

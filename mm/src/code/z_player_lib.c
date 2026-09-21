@@ -2734,6 +2734,7 @@ s32 Player_OverrideLimbDrawGameplayDefault(PlayState* play, s32 limbIndex, Gfx**
             if (player->transformation == PLAYER_FORM_ZORA) {
                 Matrix_Scale((player->unk_B10[0] * 1) + 1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
             }
+            GameInteractor_Should(VB_OVERRIDE_PLAYER_HAT_DL, true, player, play, dList, pos, rot);
         }
     }
 
