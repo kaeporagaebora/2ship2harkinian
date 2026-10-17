@@ -192,6 +192,36 @@ void Rando::MiscBehavior::OnFileCreate(s16 fileNum) {
                                              std::to_string(RANDO_SAVE_OPTIONS[RO_LOGIC]));
                 }
 
+                // Major/Minor Split is best-effort (see PlacementConstraints.cpp): log and warn if the generated
+                // seed actually has any mismatches, so this can be checked without manually combing the spoiler log.
+                if (RANDO_SAVE_OPTIONS[RO_MAJOR_MINOR_SPLIT] == RO_GENERIC_YES) {
+                    int mismatches = 0;
+                    for (auto& [randoCheckId, randoStaticCheck] : Rando::StaticData::Checks) {
+                        auto& randoSaveCheck = RANDO_SAVE_CHECKS[randoCheckId];
+                        if (!randoSaveCheck.shuffled ||
+                            Rando::StaticData::Items[randoSaveCheck.randoItemId].randoItemType == RITYPE_JUNK) {
+                            continue;
+                        }
+                        if (Rando::Logic::IsMajorRandoItem(randoSaveCheck.randoItemId) !=
+                            Rando::Logic::IsMajorRandoCheck(randoCheckId)) {
+                            mismatches++;
+                            SPDLOG_DEBUG("Major/Minor Split mismatch: {}: {}", randoStaticCheck.name,
+                                         Rando::StaticData::Items[randoSaveCheck.randoItemId].spoilerName);
+                        }
+                    }
+                    if (mismatches > 0) {
+                        SPDLOG_WARN("Major/Minor Split: {} item(s) could not be placed in a matching-tier location "
+                                    "(this is more likely with Enemy/Boss Souls, Ocarina Buttons, Clock Shuffle or "
+                                    "many Triforce Pieces enabled, which add major/minor items with no location of "
+                                    "their own)",
+                                    mismatches);
+                        Notification::Emit({ .message = "Major/Minor Split: " + std::to_string(mismatches) +
+                                                        " item(s) landed in the wrong tier (see log)" });
+                    } else {
+                        SPDLOG_INFO("Major/Minor Split: every item was placed in a matching-tier location");
+                    }
+                }
+
                 if (CVarGetInteger("gRando.GenerateSpoiler", 1)) {
                     nlohmann::json spoiler = Rando::Spoiler::GenerateFromSaveContext();
                     spoiler["inputSeed"] = inputSeed;
