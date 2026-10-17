@@ -677,7 +677,8 @@ nlohmann::json majorMinorSplitPresetJ = R"(
             "GenerateSpoiler": 1,
             "Options": {
                 "RO_LOGIC": 0,
-                "RO_MAJOR_MINOR_SPLIT": 1
+                "RO_MAJOR_MINOR_SPLIT": 1,
+                "RO_PLACEMENT_STRAY_FAIRIES": 2
             }
         }
     },
