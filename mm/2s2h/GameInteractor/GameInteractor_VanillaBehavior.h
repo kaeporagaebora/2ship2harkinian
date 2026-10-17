@@ -352,6 +352,15 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // (Player_CheckForIdleAnim(this) == IDLE_ANIM_NONE) || (this->speedXZ != 0.0f) [|| ANIM_FLAG_ENABLE_MOVEMENT]
+    // ```
+    // Whether the upper body animation only overrides the upper body limbs (true) or the whole body (false).
+    // #### `args`
+    // - `*Player`
+    VB_COPY_UPPER_BODY_LIMBS_ONLY,
+
+    // #### `result`
+    // ```c
     // (bean->unk_1E4 == 2) || (bean->unk_1E4 == 1)
     // ```
     // #### `args`
@@ -805,6 +814,27 @@ typedef enum {
     // - `*EnGs`
     // - `*PlayState`
     VB_EN_GS_FINISH_OCARINA_ON_RESET,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
+    // Whether a horse freezes (stops moving at once) when its rider gets off.
+    // #### `args`
+    // - `*EnHorse`
+    // - `*PlayState`
+    VB_FREEZE_HORSE_WHEN_RIDER_LEAVES,
+
+    // #### `result`
+    // ```c
+    // false
+    // ```
+    // Whether a horse without a rider that has just finished braking should freeze, like a horse that was dismounted
+    // does, rather than stay in its "ridden and standing" state.
+    // #### `args`
+    // - `*EnHorse`
+    // - `*PlayState`
+    VB_FREEZE_UNRIDDEN_HORSE_AFTER_BRAKING,
 
     // #### `result`
     // ```c
@@ -1690,6 +1720,20 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // true
+    // ```
+    // The result is ignored, the hook lets a mod replace the display list of Link's hat (`*dList`).
+    // The matrix of the hat limb is not applied yet at this point, `pos` and `rot` are its joint transform.
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    // - `*Gfx*` (the display list of the limb)
+    // - `*Vec3f` (pos)
+    // - `*Vec3s` (rot)
+    VB_OVERRIDE_PLAYER_HAT_DL,
+
+    // #### `result`
+    // ```c
     // player->stateFlags3 & PLAYER_STATE3_10000000
     // ```
     // #### `args`
@@ -2034,6 +2078,15 @@ typedef enum {
     // ```c
     // true
     // ```
+    // Whether item buttons are processed this frame (using or swapping items, including the B button sword).
+    // #### `args`
+    // - `*Player`
+    VB_PROCESS_ITEM_BUTTONS,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
     // #### `args`
     // - `*ObjOshihiki`
     VB_PUSH_BLOCK_SET_SPEED,
@@ -2190,6 +2243,17 @@ typedef enum {
     // #### `args`
     // - `*EnElforg`
     VB_SET_DRAW_FOR_SAVED_STRAY_FAIRY,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
+    // The result is ignored, the hook only modifies the speed.
+    // #### `args`
+    // - `*Player`
+    // - `s8` (the item action being changed to, `PLAYER_IA_NONE` when putting an item away)
+    // - `*f32` (the animation speed of the change, negative when putting an item away)
+    VB_SET_HELD_ITEM_CHANGE_SPEED,
 
     // #### `result`
     // ```c
@@ -2372,6 +2436,24 @@ typedef enum {
 
     // #### `result`
     // ```c
+    // false
+    // ```
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    VB_START_HORSE_BACKFLIP,
+
+    // #### `result`
+    // ```c
+    // true
+    // ```
+    // Whether the horse boosts (uses a carrot) when A is pressed.
+    // #### `args`
+    // - `*EnHorse`
+    VB_START_HORSE_BOOST,
+
+    // #### `result`
+    // ```c
     // !(this->stateFlags1 & PLAYER_STATE1_8000000) &&
     // (Player_GetMeleeWeaponHeld(this) != PLAYER_MELEEWEAPON_NONE) &&
     // Player_CanUpdateItems(this) &&
@@ -2380,6 +2462,16 @@ typedef enum {
     // #### `args`
     // - None
     VB_START_JUMPSLASH,
+
+    // #### `result`
+    // ```c
+    // false
+    // ```
+    // #### `args`
+    // - `*Player`
+    // - `*PlayState`
+    // - `PlayerMeleeWeaponAnimation` (the attack about to start)
+    VB_START_RUNNING_SLASH,
 
     // #### `result`
     // ```c

@@ -1160,6 +1160,12 @@ void EnHorse_MountedIdle(EnHorse* this, PlayState* play) {
     f32 mag;
     s16 angle = 0;
 
+    if ((this->playerControlled == false) &&
+        GameInteractor_Should(VB_FREEZE_UNRIDDEN_HORSE_AFTER_BRAKING, false, this, play)) {
+        EnHorse_Freeze(this, play);
+        return;
+    }
+
     this->actor.speed = 0.0f;
     EnHorse_StickDirection(&this->curStick, &mag, &angle);
     if (mag > 10.0f) {
@@ -3675,7 +3681,9 @@ void EnHorse_MountDismount(EnHorse* this, PlayState* play) {
         this->noInputTimerMax = 35;
         this->stateFlags &= ~ENHORSE_UNRIDEABLE;
         this->playerControlled = false;
-        EnHorse_Freeze(this, play);
+        if (GameInteractor_Should(VB_FREEZE_HORSE_WHEN_RIDER_LEAVES, true, this, play)) {
+            EnHorse_Freeze(this, play);
+        }
     }
 }
 
@@ -4021,7 +4029,8 @@ void func_80886C00(EnHorse* this, PlayState* play) {
          (this->action == ENHORSE_ACTION_MOUNTED_GALLOP)) &&
         (CHECK_BTN_ALL(input->press.button, BTN_A) || (AudioVoice_GetWord() == VOICE_WORD_ID_HIYA)) &&
         (play->interfaceCtx.aButtonDoActionDelayed == DO_ACTION_FASTER) && !(this->stateFlags & ENHORSE_BOOST) &&
-        !(this->stateFlags & ENHORSE_FLAG_8) && !(this->stateFlags & ENHORSE_FLAG_9)) {
+        !(this->stateFlags & ENHORSE_FLAG_8) && !(this->stateFlags & ENHORSE_FLAG_9) &&
+        GameInteractor_Should(VB_START_HORSE_BOOST, true, this)) {
         if (this->numBoosts > 0) {
             Rumble_Request(0.0f, 180, 20, 100);
             this->stateFlags |= ENHORSE_BOOST;

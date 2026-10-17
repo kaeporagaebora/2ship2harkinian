@@ -78,6 +78,7 @@ std::vector<int32_t> incompatibleWithVanilla = {
     RO_PLENTIFUL_ITEMS,
     RO_CLOCK_SHUFFLE,
     RO_SHUFFLE_TYCOON_WALLET,
+    RO_MAJOR_MINOR_SPLIT,
 };
 // clang-format on
 
@@ -140,6 +141,7 @@ void ClearIncompatibleSetting() {
             CVarClear(Rando::StaticData::Options[RO_SHUFFLE_SWIM].cvar);
             CVarClear(Rando::StaticData::Options[RO_CLOCK_SHUFFLE].cvar);
             CVarClear(Rando::StaticData::Options[RO_SHUFFLE_TYCOON_WALLET].cvar);
+            CVarClear(Rando::StaticData::Options[RO_MAJOR_MINOR_SPLIT].cvar);
             break;
         default:
             break;
@@ -1216,6 +1218,13 @@ static void DrawItemPoolTab() {
                      "Major items, masks, and keys will have an extra copy added to the item pool. \n"
                      "Lesser items, stray fairies, and skulltula tokens will have a chance for an "
                      "extra copy to be added to the item pool.");
+    ItemPoolCheckbox("Major/Minor Split", RO_MAJOR_MINOR_SPLIT,
+                     "Keeps major items (masks, equipment, songs, boss remains and souls, Heart Containers from "
+                     "bosses...) out of minor locations, and minor items (Heart Pieces, keys, skulltula tokens, "
+                     "upgrades...) out of major locations, where a location's own vanilla item decides which it is. "
+                     "Best effort: if an option combination leaves more items of a tier than there are locations for "
+                     "it (e.g. shuffling several bonus items with no location of their own), the extra few may still "
+                     "end up in the other tier.");
     CVarCheckbox("Traps", Rando::StaticData::Options[RO_SHUFFLE_TRAPS].cvar,
                  CheckboxOptions({ { .tooltip = "Add trapped items to the pool. Traps disguise themselves as items "
                                                 "you have not obtained yet." } }));

@@ -130,10 +130,22 @@ void ApplyNearlyNoLogicToSaveContext(std::vector<RandoCheckId>& checkPool, std::
 void ApplyNoLogicToSaveContext(std::vector<RandoCheckId>& checkPool, std::vector<RandoItemId>& itemPool);
 bool StaysAtVanillaCheck(RandoItemId itemId, const RandoSaveInfo& saveInfo);
 bool IsSongLocationItem(RandoItemId itemId);
+// Whether randoItemId counts as a "major" item for the Major/Minor Split option (RO_MAJOR_MINOR_SPLIT): every item
+// of type RITYPE_MAJOR or RITYPE_MASK, plus the four boss Heart Containers specifically (not Heart Pieces). Everything
+// else (lesser items, small/boss keys, stray fairies, skulltula tokens, heart pieces, double defense) counts as minor.
+// Junk is neither, and is exempt from the split entirely.
+bool IsMajorRandoItem(RandoItemId itemId);
+// Whether randoCheckId counts as a "major" location, i.e. its own vanilla item is a major item by the rule above.
+bool IsMajorRandoCheck(RandoCheckId checkId);
 bool IsItemAllowedAtCheck(RandoItemId itemId, RandoCheckId checkId);
 size_t SelectItemForCheck(const std::vector<RandoItemId>& itemPool, const std::vector<RandoCheckId>& checkPool,
                           RandoCheckId checkId);
 void PreplaceConfinedItems(std::vector<RandoCheckId>& checkPool, std::vector<RandoItemId>& itemPool);
+// Randomly assigns every item in itemPool to a check in checkPool with no reachability logic (used by No Logic and
+// Nearly No Logic). Honors RO_MAJOR_MINOR_SPLIT on a best-effort basis (see MatchesMajorMinorSplit); these logic
+// modes never fail generation, so any leftover imbalance the option can't satisfy is still filled rather than left
+// empty. Empties both pools.
+void FillChecksRandomly(std::vector<RandoCheckId>& checkPool, std::vector<RandoItemId>& itemPool);
 
 struct RandoRegionExit {
     s32 returnEntrance;

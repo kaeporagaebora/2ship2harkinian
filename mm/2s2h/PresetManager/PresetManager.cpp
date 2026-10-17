@@ -181,6 +181,7 @@ nlohmann::json curatedPresetJ = R"(
                 "ClimbSpeed": 5,
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
+                "EponaBackflip": 0,
                 "FierceDeityPutaway": 1,
                 "InfiniteDekuHopping": 1,
                 "InstantPutaway": 1,
@@ -466,11 +467,14 @@ nlohmann::json voyage3PresetJ = R"(
                 "FastFlowerLaunch": 1,
                 "FasterPushAndPull": 1,
                 "FierceDeityPutaway": 1,
+                "HatPhysics": 0,
                 "InfiniteDekuHopping": 0,
                 "InstantPutaway": 1,
                 "ManualJump": 0,
                 "PreventDiveOverWater": 0,
+                "SlashWhileRunning": 0,
                 "UnderwaterOcarina": 1,
+                "UnsheatheSpeed": 1.0,
                 "UnsheatheWithoutSlashing": 0
             },
             "PlayerActions": {
@@ -666,6 +670,27 @@ nlohmann::json voyage3PresetJ = R"(
 }
 )"_json;
 
+nlohmann::json majorMinorSplitPresetJ = R"(
+{
+    "ClearCVars": [
+        "gRando"
+    ],
+    "CVars": {
+        "gRando": {
+            "Enabled": 1,
+            "GenerateSpoiler": 1,
+            "Options": {
+                "RO_LOGIC": 0,
+                "RO_MAJOR_MINOR_SPLIT": 1,
+                "RO_PLACEMENT_STRAY_FAIRIES": 2
+            }
+        }
+    },
+    "type": "2S2H_PRESET",
+    "version": 1
+}
+)"_json;
+
 std::unordered_map<std::string, std::pair<nlohmann::json, std::set<std::string>>> presets = {};
 const std::filesystem::path presetsFolderPath(Ship::Context::GetPathRelativeToAppDirectory("presets", appShortName));
 
@@ -675,6 +700,7 @@ void PresetManager_RefreshPresets() {
         { "Defaults (Everything Off)", { defaultsPresetJ, { "Developer Tools", "Enhancements", "HUD", "Rando" } } });
     presets.insert({ "Curated", { curatedPresetJ, { "Developer Tools", "Enhancements", "HUD" } } });
     presets.insert({ "Voyage 3", { voyage3PresetJ, { "Developer Tools", "Enhancements", "Rando" } } });
+    presets.insert({ "Major/Minor Split", { majorMinorSplitPresetJ, { "Rando" } } });
 
     // ensure the presets folder exists
     if (!std::filesystem::exists(presetsFolderPath)) {

@@ -141,6 +141,29 @@ int RandoItemIdToConfinementGroup(RandoItemId itemId) {
     return RandoItemIdToDungeon(itemId);
 }
 
+bool IsMajorRandoItem(RandoItemId itemId) {
+    if (itemId == RI_HEART_CONTAINER) {
+        return true; // the 4 boss rewards, not Heart Pieces
+    }
+    RandoItemType itemType = Rando::StaticData::Items[itemId].randoItemType;
+    return itemType == RITYPE_MAJOR || itemType == RITYPE_MASK;
+}
+
+bool IsMajorRandoCheck(RandoCheckId checkId) {
+    // A check's tier is whatever its own vanilla item's tier is.
+    return IsMajorRandoItem(Rando::StaticData::Checks[checkId].randoItemId);
+}
+
+// Whether itemId's tier (major/minor) matches checkId's tier, when the Major/Minor Split option is on. Junk is exempt
+// (there's nothing about it worth protecting a tier for), and the check is skipped entirely when the option is off.
+static bool MatchesMajorMinorSplit(RandoItemId itemId, RandoCheckId checkId) {
+    if (RANDO_SAVE_OPTIONS[RO_MAJOR_MINOR_SPLIT] != RO_GENERIC_YES ||
+        Rando::StaticData::Items[itemId].randoItemType == RITYPE_JUNK) {
+        return true;
+    }
+    return IsMajorRandoItem(itemId) == IsMajorRandoCheck(checkId);
+}
+
 bool IsItemAllowedAtCheck(RandoItemId itemId, RandoCheckId checkId) {
     int confinedGroup = RandoItemIdToConfinementGroup(itemId);
     return confinedGroup < 0 || confinedGroup == CheckIdToConfinementGroup(checkId);
@@ -165,7 +188,44 @@ size_t SelectItemForCheck(const std::vector<RandoItemId>& itemPool, const std::v
             }
             if (confinedItems >= groupChecks) {
                 for (size_t i = itemPool.size(); i-- > 0;) {
-                    if (RandoItemIdToConfinementGroup(itemPool[i]) == group) {
+                    if (RandoItemIdToConfinementGroup(itemPool[i]) == group &&
+                        MatchesMajorMinorSplit(itemPool[i], checkId)) {
+                        return i;
+                    }
+                }
+                // No confined item here also matches this check's tier: fall through. If the split truly cannot be
+                // honored (not enough of this tier left for the checks that need it), the loops below will either
+                // find a tier-appropriate item anyway or, failing that, make generation retry rather than place a
+                // mismatched item silently.
+            }
+        }
+    }
+
+    // Major/Minor Split: prefer an item of this check's own tier, but only while there is still enough of that tier
+    // left in the pool for every check of that tier that still needs one (counting this one). Once that stops being
+    // true the split can't be honored for every remaining check of that tier, so the preference is dropped here
+    // rather than risk failing generation over an unavoidable, often option-driven imbalance (e.g. extra Enemy Souls
+    // with no matching new checks).
+    if (RANDO_SAVE_OPTIONS[RO_MAJOR_MINOR_SPLIT] == RO_GENERIC_YES) {
+        bool wantMajor = IsMajorRandoCheck(checkId);
+        int tierItems = 0;
+        for (RandoItemId itemId : itemPool) {
+            if (Rando::StaticData::Items[itemId].randoItemType != RITYPE_JUNK &&
+                IsMajorRandoItem(itemId) == wantMajor) {
+                tierItems++;
+            }
+        }
+        if (tierItems > 0) {
+            int tierChecks = 1; // this check
+            for (RandoCheckId other : checkPool) {
+                if (IsMajorRandoCheck(other) == wantMajor) {
+                    tierChecks++;
+                }
+            }
+            if (tierItems >= tierChecks) {
+                for (size_t i = itemPool.size(); i-- > 0;) {
+                    if (Rando::StaticData::Items[itemPool[i]].randoItemType != RITYPE_JUNK &&
+                        IsMajorRandoItem(itemPool[i]) == wantMajor && IsItemAllowedAtCheck(itemPool[i], checkId)) {
                         return i;
                     }
                 }
@@ -201,7 +261,17 @@ void PreplaceConfinedItems(std::vector<RandoCheckId>& checkPool, std::vector<Ran
         if (checks.empty()) {
             continue; // dungeon out of room: leave it for the general pool
         }
-        size_t pick = Ship_Random(0, checks.size());
+
+        // Prefer a check whose tier matches this item's, but settle for any check in the group rather than leave the
+        // item unplaced (PreplaceConfinedItems only runs for No Logic / Nearly No Logic, which never fail generation).
+        std::vector<size_t> matchingTier;
+        for (size_t c = 0; c < checks.size(); c++) {
+            if (MatchesMajorMinorSplit(itemPool[i], checks[c])) {
+                matchingTier.push_back(c);
+            }
+        }
+        size_t pick =
+            matchingTier.empty() ? Ship_Random(0, checks.size()) : matchingTier[Ship_Random(0, matchingTier.size())];
         RandoCheckId checkId = checks[pick];
         checks.erase(checks.begin() + pick);
 
@@ -227,6 +297,88 @@ void PreplaceConfinedItems(std::vector<RandoCheckId>& checkPool, std::vector<Ran
         }
     }
     checkPool = std::move(remainingChecks);
+}
+
+void FillChecksRandomly(std::vector<RandoCheckId>& checkPool, std::vector<RandoItemId>& itemPool) {
+    for (size_t i = 0; i < itemPool.size(); i++) {
+        std::swap(itemPool[i], itemPool[Ship_Random(0, itemPool.size())]);
+    }
+
+    if (RANDO_SAVE_OPTIONS[RO_MAJOR_MINOR_SPLIT] != RO_GENERIC_YES) {
+        for (RandoCheckId checkId : checkPool) {
+            if (checkId == RC_UNKNOWN) {
+                continue;
+            }
+            RANDO_SAVE_CHECKS[checkId].shuffled = true;
+            RANDO_SAVE_CHECKS[checkId].randoItemId = itemPool.back();
+            itemPool.pop_back();
+        }
+        checkPool.clear();
+        itemPool.clear();
+        return;
+    }
+
+    std::vector<RandoItemId> majorItems, minorItems, junkItems;
+    for (RandoItemId itemId : itemPool) {
+        if (Rando::StaticData::Items[itemId].randoItemType == RITYPE_JUNK) {
+            junkItems.push_back(itemId);
+        } else if (IsMajorRandoItem(itemId)) {
+            majorItems.push_back(itemId);
+        } else {
+            minorItems.push_back(itemId);
+        }
+    }
+
+    std::vector<RandoCheckId> majorChecks, minorChecks;
+    for (RandoCheckId checkId : checkPool) {
+        if (checkId == RC_UNKNOWN) {
+            continue;
+        }
+        if (IsMajorRandoCheck(checkId)) {
+            majorChecks.push_back(checkId);
+        } else {
+            minorChecks.push_back(checkId);
+        }
+    }
+
+    // Junk is tier-agnostic filler, so use it to cover a shortfall on either side before resorting to a mismatch.
+    auto topUp = [&](std::vector<RandoItemId>& items, size_t target) {
+        while (items.size() < target && !junkItems.empty()) {
+            items.push_back(junkItems.back());
+            junkItems.pop_back();
+        }
+    };
+    topUp(majorItems, majorChecks.size());
+    topUp(minorItems, minorChecks.size());
+
+    // Any remaining shortfall is a genuine imbalance (e.g. more major items than major checks, which some option
+    // combinations can produce) that junk alone can't fix. These logic modes never fail generation, so fill it from
+    // the other tier's surplus as a last resort, keeping every check filled.
+    auto assign = [&](std::vector<RandoCheckId>& checks, std::vector<RandoItemId>& items,
+                      std::vector<RandoItemId>& other) {
+        for (RandoCheckId checkId : checks) {
+            RandoItemId itemId;
+            if (!items.empty()) {
+                itemId = items.back();
+                items.pop_back();
+            } else if (!junkItems.empty()) {
+                itemId = junkItems.back();
+                junkItems.pop_back();
+            } else if (!other.empty()) {
+                itemId = other.back();
+                other.pop_back();
+            } else {
+                continue; // nothing left; shouldn't happen since the pools were balanced to equal sizes beforehand
+            }
+            RANDO_SAVE_CHECKS[checkId].shuffled = true;
+            RANDO_SAVE_CHECKS[checkId].randoItemId = itemId;
+        }
+    };
+    assign(majorChecks, majorItems, minorItems);
+    assign(minorChecks, minorItems, majorItems);
+
+    checkPool.clear();
+    itemPool.clear();
 }
 
 } // namespace Logic
