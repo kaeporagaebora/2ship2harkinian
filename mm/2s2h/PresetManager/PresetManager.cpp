@@ -670,6 +670,26 @@ nlohmann::json voyage3PresetJ = R"(
 }
 )"_json;
 
+nlohmann::json majorMinorSplitPresetJ = R"(
+{
+    "ClearCVars": [
+        "gRando"
+    ],
+    "CVars": {
+        "gRando": {
+            "Enabled": 1,
+            "GenerateSpoiler": 1,
+            "Options": {
+                "RO_LOGIC": 0,
+                "RO_MAJOR_MINOR_SPLIT": 1
+            }
+        }
+    },
+    "type": "2S2H_PRESET",
+    "version": 1
+}
+)"_json;
+
 std::unordered_map<std::string, std::pair<nlohmann::json, std::set<std::string>>> presets = {};
 const std::filesystem::path presetsFolderPath(Ship::Context::GetPathRelativeToAppDirectory("presets", appShortName));
 
@@ -679,6 +699,7 @@ void PresetManager_RefreshPresets() {
         { "Defaults (Everything Off)", { defaultsPresetJ, { "Developer Tools", "Enhancements", "HUD", "Rando" } } });
     presets.insert({ "Curated", { curatedPresetJ, { "Developer Tools", "Enhancements", "HUD" } } });
     presets.insert({ "Voyage 3", { voyage3PresetJ, { "Developer Tools", "Enhancements", "Rando" } } });
+    presets.insert({ "Major/Minor Split", { majorMinorSplitPresetJ, { "Rando" } } });
 
     // ensure the presets folder exists
     if (!std::filesystem::exists(presetsFolderPath)) {

@@ -12,9 +12,9 @@ namespace Logic {
 void ApplyNearlyNoLogicToSaveContext(std::vector<RandoCheckId>& checkPool, std::vector<RandoItemId>& itemPool) {
     PreplaceConfinedItems(checkPool, itemPool);
 
-    for (size_t i = 0; i < itemPool.size(); i++) {
-        std::swap(itemPool[i], itemPool[Ship_Random(0, itemPool.size())]);
-    }
+    // FillChecksRandomly empties both pools, so keep the check list to classify afterwards.
+    std::vector<RandoCheckId> allChecks = checkPool;
+    FillChecksRandomly(checkPool, itemPool);
 
     std::map<RandoItemId, RandoCheckId> importantItems;
     std::vector<RandoCheckId> safeChecks;
@@ -61,16 +61,12 @@ void ApplyNearlyNoLogicToSaveContext(std::vector<RandoCheckId>& checkPool, std::
 
     auto IsSafeCheckType = [&](RandoCheckType randoCheckType) { return randoCheckType != RCTYPE_COW; };
 
-    for (auto& randoCheckId : checkPool) {
+    for (auto& randoCheckId : allChecks) {
         if (randoCheckId == RC_UNKNOWN) {
             continue;
         }
 
-        RandoItemId randoItemId = itemPool.back();
-        itemPool.pop_back();
-
-        RANDO_SAVE_CHECKS[randoCheckId].shuffled = true;
-        RANDO_SAVE_CHECKS[randoCheckId].randoItemId = randoItemId;
+        RandoItemId randoItemId = RANDO_SAVE_CHECKS[randoCheckId].randoItemId;
 
         auto randoStaticCheck = Rando::StaticData::Checks[randoCheckId];
 
